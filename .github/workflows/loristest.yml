@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
       - name: Move files to demo folder
-        run: rsync -r --exclude='.github' Loris/ ./
+        run: cp -r ./Loris/ ./
       - uses: actions/checkout@v3
 
       - name: Install EEG package dependencies
