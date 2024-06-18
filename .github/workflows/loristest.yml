@@ -24,6 +24,7 @@ jobs:
         run: npm ci
 
       - name: Compile LORIS javascript
+        working-directory: Loris  # Navigate to the Loris directory
         run: npm run compile
 
       - name: Create LORIS JS tarball
