@@ -11,8 +11,6 @@ jobs:
       EEG_VIS_ENABLED: 'true'
     runs-on: ubuntu-latest
     steps: 
-      - name: Move files to demo folder
-        run: ls
       - uses: actions/checkout@v3
 
       - name: Install EEG package dependencies
@@ -27,10 +25,13 @@ jobs:
           protoc protocol-buffers/chunk.proto --js_out=import_style=commonjs,binary:./src/
 
       - name: Install npm modules
-        run: npm ci
+        run: |
+          cd Loris
+          npm ci
 
       - name: Compile LORIS javascript
-        run: npm run compile
+        run: |
+          npm run compile
 
       - name: Create LORIS JS tarball
         run: tar cfvz lorisjs.tar.gz htdocs/js/components/ modules/*/js/*
@@ -65,7 +66,9 @@ jobs:
           extensions: zip, php-ast
 
       - name: Validate composer.json and composer.lock
-        run: composer validate
+        run: |
+          cd Loris
+          composer validate
 
       - name: Cache Composer packages
         id: composer-cache
