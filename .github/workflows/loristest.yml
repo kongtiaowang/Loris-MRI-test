@@ -243,7 +243,7 @@ jobs:
         extensions: zip, php-ast
 
     - name: Validate composer.json and composer.lock
-      run: composer validate
+      run: composer validate --working-dir=Loris
 
     - name: Cache Composer packages
       id: composer-cache
