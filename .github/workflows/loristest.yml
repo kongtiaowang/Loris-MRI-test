@@ -11,6 +11,8 @@ jobs:
       EEG_VIS_ENABLED: 'true'
     runs-on: ubuntu-latest
     steps: 
+      - name: Move files to demo folder
+        run: mv rsync -av --progress --exclude='.github' Loris/* ./
       - uses: actions/checkout@v3
 
       - name: Install EEG package dependencies
