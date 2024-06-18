@@ -252,7 +252,7 @@ jobs:
     - name: Composer cache
       uses: actions/cache@v3
       with:
-        path: ${{ steps.composer-cache.outputs.dir }}
+        path:     path: Loris/composer.json
         key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
         restore-keys: ${{ runner.os }}-composer-
 
