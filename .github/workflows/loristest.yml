@@ -20,6 +20,7 @@ jobs:
           protoc protocol-buffers/chunk.proto --js_out=import_style=commonjs,binary:./src/
 
       - name: Install npm modules
+        working-directory: Loris  # Navigate to the Loris directory
         run: npm ci
 
       - name: Compile LORIS javascript
