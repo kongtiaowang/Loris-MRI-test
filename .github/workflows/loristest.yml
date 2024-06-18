@@ -4,13 +4,12 @@ on:
   - push
   - pull_request
 
-
 jobs:
   buildjs:
     env:
       EEG_VIS_ENABLED: 'true'
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - uses: actions/checkout@v3
 
       - name: Install EEG package dependencies
@@ -21,36 +20,28 @@ jobs:
           protoc protocol-buffers/chunk.proto --js_out=import_style=commonjs,binary:./src/
 
       - name: Install npm modules
-        run: |
-          cd Loris
-          npm ci
+        run: npm ci
 
       - name: Compile LORIS javascript
-        run: |
-          cd Loris
-          npm run compile
+        run: npm run compile
 
       - name: Create LORIS JS tarball
-        run: |
-          cd Loris
-          tar cfvz lorisjs.tar.gz htdocs/js/components/ modules/*/js/*
+        run: tar cfvz lorisjs.tar.gz Loris/htdocs/js/components/ Loris/modules/*/js/*
 
       - name: Create node_modules tarball
-        run: |
-          cd Loris
-          tar cfvz node_modules.tar.gz node_modules
+        run: tar cfvz node_modules.tar.gz Loris/node_modules
 
       - uses: actions/upload-artifact@v3
         name: Upload node_modules artifact
         with:
           name: node_modules
-          path: Loris/node_modules.tar.gz
+          path: node_modules.tar.gz
 
       - uses: actions/upload-artifact@v3
         name: Upload lorisjs.tar.gz artifact
         with:
           name: lorisjs
-          path: Loris/lorisjs.tar.gz
+          path: lorisjs.tar.gz
 
   buildphp:
     runs-on: ubuntu-latest
@@ -67,31 +58,31 @@ jobs:
           extensions: zip, php-ast
 
       - name: Validate composer.json and composer.lock
-        run: |
-          composer validate --working-dir=Loris
+        run: composer validate --working-dir=Loris
+
       - name: Cache Composer packages
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config --working-dir=Loris cache-files-dir)"
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Composer cache
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('Loris/composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install composer dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer install --working-dir=Loris --prefer-dist --no-progress --no-suggest
+        run: composer install --prefer-dist --no-progress --no-suggest --working-dir=Loris
 
       - name: Create vendor tarball
-        run: tar cfvz vendor-php${{ matrix.php }}.tar.gz Loris/vendor
+        run: tar cfvz vendor-php${{matrix.php}}.tar.gz Loris/vendor
 
       - uses: actions/upload-artifact@v3
-        name: Upload vendor-php${{ matrix.php }}.tar.gz artifact
+        name: Upload vendor-php${{matrix.php}}.tar.gz artifact
         with:
-          name: vendor-php${{ matrix.php }}
-          path: vendor-php${{ matrix.php }}.tar.gz
+          name: vendor-php${{matrix.php}}
+          path: vendor-php${{matrix.php}}.tar.gz
 
   api:
     runs-on: ubuntu-latest
@@ -117,132 +108,47 @@ jobs:
         name: Download node_modules artifact
         with:
           name: node_modules
-          path: Loris/
+          path: .
 
       - uses: actions/download-artifact@v3
         name: Download compiled LORIS javascript artifact
         with:
           name: lorisjs
-          path: Loris/
+          path: .
 
       - uses: actions/download-artifact@v3
         name: Download PHP dependencies artifact
         with:
           name: vendor-php${{matrix.php}}
-          path: Loris/
-
+          path: .
 
       - name: Extract node_modules
-        run: tar xfvz Loris/node_modules.tar.gz
+        run: tar xfvz node_modules.tar.gz
 
       - name: Extract compiled JS
-        run: tar xfvz Loris/lorisjs.tar.gz
+        run: tar xfvz lorisjs.tar.gz
 
       - name: Extract composer vendor directory
-        run: tar xfvz Loris/vendor-php${{matrix.php}}.tar.gz
+        run: tar xfvz vendor-php${{matrix.php}}.tar.gz
 
       - name: Generate VERSION file
         run: make VERSION
 
       - name: Setup project/ directory
         run: |
-          mkdir -p Loris/project/instruments
-          cp Loris/test/config.xml Loris/project/config.xml
-          cp Loris/test/test_instrument/NDB_BVL_Instrument_testtest.class.inc Loris/project/instruments/
-          cp -r Loris/raisinbread/instruments/* Loris/project/instruments/
-          sed -i 's/<sandbox>1<\/sandbox>/<sandbox>0<\/sandbox>/g' Loris/project/config.xml
-          sed -i 's/<adminUser>SQLTestUser<\/adminUser>/<adminUser>root<\/adminUser>/g' Loris/project/config.xml
-          sed -i 's/<adminPassword>TestPassword<\/adminPassword>/<adminPassword>root<\/adminPassword>/g' Loris/project/config.xml
-          sed -i 's/<host>db<\/host>/<host>localhost<\/host>/g' Loris/project/config.xml
-          cat Loris/project/config.xml
+          mkdir -p project/instruments
+          cp test/config.xml project/config.xml
+          cp test/test_instrument/NDB_BVL_Instrument_testtest.class.inc project/instruments/
+          cp -r raisinbread/instruments/* project/instruments/
+          sed -i 's/<sandbox>1<\/sandbox>/<sandbox>0<\/sandbox>/g' project/config.xml
+          sed -i 's/<adminUser>SQLTestUser<\/adminUser>/<adminUser>root<\/adminUser>/g' project/config.xml
+          sed -i 's/<adminPassword>TestPassword<\/adminPassword>/<adminPassword>root<\/adminPassword>/g' project/config.xml
+          sed -i 's/<host>db<\/host>/<host>localhost<\/host>/g' project/config.xml
+          cat project/config.xml
 
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
           mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
-          mysql -e "CREATE USER '${{env.DB_USER}}'@'localhost' IDENTIFIED BY '${{env.DB_PASSWORD}}'" -uroot -proot
-          mysql -e "GRANT UPDATE,INSERT,SELECT,DELETE,CREATE TEMPORARY TABLES ON ${{env.DB_DATABASE}}.* TO '${{env.DB_USER}}'@'localhost'" -uroot -proot
+          mysql -e "CREATE USER '${{env.DB_USER}}'
 
-      - name: Source default schema and Raisinbread
-        run: |
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/SQL/0000-00-00-schema.sql
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/SQL/0000-00-01-Modules.sql
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/SQL/0000-00-02-Permission.sql
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/SQL/0000-00-03-ConfigTables.sql
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/SQL/0000-00-04-Help.sql
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/SQL/0000-00-05-ElectrophysiologyTables.sql
-          find Loris/raisinbread/instruments/instrument_sql -name *.sql -not -name 9999-99-99-drop_instrument_tables.sql -exec sh -c "echo Sourcing {}; mysql ${{ env.DB_DATABASE}} -uroot -proot < {}" \;
-          find Loris/raisinbread/RB_files/ -name *.sql -exec sh -c "echo Sourcing {}; mysql ${{ env.DB_DATABASE}} -uroot -proot < {}" \;
-      - name: Source instrument schemas
-        run: |
-          find Loris/raisinbread/instruments/instrument_sql -name 0000-*.sql -exec sh -c "echo Sourcing {}; mysql ${{ env.DB_DATABASE}} -uroot -proot < {}" \;
-          echo Sourcing Loris/test/test_instrument/testtest.sql
-          mysql ${{ env.DB_DATABASE}} -uroot -proot < Loris/test/test_instrument/testtest.sql
-   
-      - name: Set LORIS base path
-        run: |
-          echo UPDATE Config SET VALUE=\'`pwd`/\' WHERE ConfigID IN \(SELECT ID FROM ConfigSettings WHERE Name=\'base\'\)
-          echo UPDATE Config SET VALUE=\'`pwd`/\' WHERE ConfigID IN \(SELECT ID FROM ConfigSettings WHERE Name=\'base\'\) | mysql ${{env.DB_DATABASE}} -uroot -proot
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: zip, php-ast
-
-      - name: Start PHP Web Server
-        run: php -S localhost:8000 -t Loris/htdocs/ Loris/htdocs/router.php 2> Loris/error_log &
-
-      - name: Test server
-        run: |
-             sleep 1
-             curl -v http://localhost:8000
-
-
-      - name: Run Test Suite
-        run: |
-            Loris/vendor/bin/phpunit --configuration Loris/test/phpunit.xml --testsuite LorisAPITests --group api-${{ matrix.apiversion }}
-
-      - name: Print Error Logs
-        if: always()
-        run: cat Loris/error_log
-
-  docker:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        testsuite: ['integration']
-        php: ['8.1','8.2', '8.3']
-        ci_node_index: [0,1,2,3]
-
-        include:
-          - ci_node_total: 4
-
-          - testsuite: 'static'
-            php: '8.1'
-          - testsuite: 'static'
-            php: '8.2'
-          - testsuite: 'static'
-            php: '8.3'
-          - testsuite: 'unit'
-            php: '8.1'
-          - testsuite: 'unit'
-            php: '8.2'
-          - testsuite: 'unit'
-            php: '8.3'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: zip, php-ast
-
-      - name: Validate composer.json and composer.lock
-        run: composer validate --working-dir=Loris
-
-      - name: Cache Composer packages
-        id: composer-cache 
