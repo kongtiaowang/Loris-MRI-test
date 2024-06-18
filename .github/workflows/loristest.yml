@@ -10,18 +10,14 @@ jobs:
     env:
       EEG_VIS_ENABLED: 'true'
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v3
 
       - name: Install EEG package dependencies
-      # We only need to install protobuf-compiler
-      # Other deps were added to fix an apt dependency issue introduced by a new github Ubuntu image
-      # (see https://github.com/actions/runner-images/blob/releases/ubuntu22/20230305/images/linux/Ubuntu2204-Readme.md)
-      # that updated the list of installed apt packages/apt repositories. That issue may disappear in future Ubuntu images.
         run: |
           sudo apt install -y imagemagick-6-common libmagickcore-6.q16-6 libmagickwand-6.q16-6 \
              libprotobuf-dev libprotobuf23 libprotoc23 protobuf-compiler
-          cd modules/electrophysiology_browser/jsx/react-series-data-viewer/
+          cd Loris/modules/electrophysiology_browser/jsx/react-series-data-viewer/
           protoc protocol-buffers/chunk.proto --js_out=import_style=commonjs,binary:./src/
 
       - name: Install npm modules
@@ -31,25 +27,30 @@ jobs:
 
       - name: Compile LORIS javascript
         run: |
+          cd Loris
           npm run compile
 
       - name: Create LORIS JS tarball
-        run: tar cfvz lorisjs.tar.gz htdocs/js/components/ modules/*/js/*
+        run: |
+          cd Loris
+          tar cfvz lorisjs.tar.gz htdocs/js/components/ modules/*/js/*
 
       - name: Create node_modules tarball
-        run: tar cfvz node_modules.tar.gz node_modules
+        run: |
+          cd Loris
+          tar cfvz node_modules.tar.gz node_modules
 
       - uses: actions/upload-artifact@v3
         name: Upload node_modules artifact
         with:
           name: node_modules
-          path: node_modules.tar.gz
+          path: Loris/node_modules.tar.gz
 
       - uses: actions/upload-artifact@v3
         name: Upload lorisjs.tar.gz artifact
         with:
           name: lorisjs
-          path: lorisjs.tar.gz
+          path: Loris/lorisjs.tar.gz
 
   buildphp:
     runs-on: ubuntu-latest
@@ -71,27 +72,27 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        run: echo "::set-output name=dir::$(composer config --working-dir=Loris cache-files-dir)"
 
       - name: Composer cache
         uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('Loris/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install composer dependencies
         if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer install --prefer-dist --no-progress --no-suggest
+        run: composer install --working-dir=Loris --prefer-dist --no-progress --no-suggest
 
       - name: Create vendor tarball
-        run: tar cfvz vendor-php${{matrix.php}}.tar.gz vendor
+        run: tar cfvz vendor-php${{ matrix.php }}.tar.gz Loris/vendor
 
       - uses: actions/upload-artifact@v3
-        name: Upload vendor-php${{matrix.php}}.tar.gz artifact
+        name: Upload vendor-php${{ matrix.php }}.tar.gz artifact
         with:
-          name: vendor-php${{matrix.php}}
-          path: vendor-php${{matrix.php}}.tar.gz
+          name: vendor-php${{ matrix.php }}
+          path: vendor-php${{ matrix.php }}.tar.gz
 
   api:
     runs-on: ubuntu-latest
