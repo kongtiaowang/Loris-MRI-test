@@ -52,3 +52,43 @@ jobs:
           name: lorisjs
           path: Loris/lorisjs.tar.gz
 
+  buildphp:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: zip, php-ast
+
+      - name: Validate composer.json and composer.lock
+        run: |
+          composer validate --working-dir=Loris
+      - name: Cache Composer packages
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config --working-dir=Loris cache-files-dir)"
+
+      - name: Composer cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('Loris/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install composer dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install --working-dir=Loris --prefer-dist --no-progress --no-suggest
+
+      - name: Create vendor tarball
+        run: tar cfvz vendor-php${{ matrix.php }}.tar.gz Loris/vendor
+
+      - uses: actions/upload-artifact@v3
+        name: Upload vendor-php${{ matrix.php }}.tar.gz artifact
+        with:
+          name: vendor-php${{ matrix.php }}
+          path: vendor-php${{ matrix.php }}.tar.gz  
