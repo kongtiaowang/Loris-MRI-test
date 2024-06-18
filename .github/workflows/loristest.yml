@@ -67,8 +67,7 @@ jobs:
 
       - name: Validate composer.json and composer.lock
         run: |
-          cd Loris
-          composer validate
+          composer validate --working-dir=Loris
 
       - name: Cache Composer packages
         id: composer-cache
