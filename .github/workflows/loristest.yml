@@ -28,6 +28,7 @@ jobs:
 
     - name: Validate composer.json and composer.lock
       run: |
+        pwd
         cd Loris
         composer validate
 
