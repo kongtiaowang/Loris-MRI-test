@@ -69,6 +69,7 @@ jobs:
 
     - name: Build LORIS-MRI
       run: |
+        cd ..
         cp -r * Loris
 
     - name: Run Test Suite
