@@ -34,6 +34,7 @@ services:
     command: php -S 0.0.0.0:8000 -t /app/htdocs /app/htdocs/router.php
 
   mri:
+    build:
       context: ..
       dockerfile: Dockerfile.test.mri
     volumes:
