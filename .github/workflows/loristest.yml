@@ -86,3 +86,8 @@ jobs:
           name: vendor-php${{matrix.php}}
           path: vendor-php${{matrix.php}}.tar.gz
 
+  api:
+    runs-on: ubuntu-latest
+    needs:
+      - buildjs
+      - buildphp 
