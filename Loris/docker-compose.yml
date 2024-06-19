@@ -35,8 +35,8 @@ services:
  
   mri:
     build:
-      context: .
-      dockerfile: Dockerfile.test.mri
+      context: ..
+      dockerfile: ../Dockerfile.test.mri
     volumes:
       - ../:/app
 
