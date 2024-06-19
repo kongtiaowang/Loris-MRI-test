@@ -71,8 +71,8 @@ jobs:
     - name: Build LORIS-MRI
       run: |
         pwd
-        cd ..
-        cp -r * Loris
+        echo "========="
+        rsync -av --exclude='Loris' ./* Loris/
 
     - name: Run Test Suite
       run: |
