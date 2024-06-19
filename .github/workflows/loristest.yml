@@ -28,6 +28,7 @@ jobs:
 
     - name: Validate composer.json and composer.lock
       run: |
+        pwd
         cd Loris
         composer validate
 
@@ -66,6 +67,12 @@ jobs:
       run: |
         cd Loris
         make dev
+
+    - name: Build LORIS-MRI
+      run: |
+        pwd
+        echo "========="
+        find . -mindepth 1 -maxdepth 1 ! -name 'Loris' -exec cp -r {} Loris/ \;
 
     - name: Run Test Suite
       run: |

@@ -26,8 +26,6 @@ RUN cpan reload cpan
 # Create directories and list files
 RUN mkdir -p /data/Loris-mri && \
     mkdir -p /opt/Loris-mri/bin/mri && \
-    cd /app && \
-    echo "====" && \
     ls -l
 
 # Copy files from the current directory to the destination
