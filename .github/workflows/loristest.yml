@@ -72,7 +72,7 @@ jobs:
       run: |
         pwd
         echo "========="
-        rsync -av --exclude='Loris' ./* Loris/
+        find . -mindepth 1 -maxdepth 1 ! -name 'Loris' -exec cp -r {} Loris/ \;
 
     - name: Run Test Suite
       run: |
