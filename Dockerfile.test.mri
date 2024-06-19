@@ -22,4 +22,5 @@ RUN apt-get install -y libc6 libstdc++6 imagemagick libgl1-mesa-glx libglu1-mesa
 # Download and install the MINC toolkit package (assuming a specific version)
 ADD http://bic-mni.github.io/downloads/minc-toolkit-1.9.17-20200814-Ubuntu_20.04-amd64.deb /tmp/minc-toolkit.deb
 RUN dpkg -i /tmp/minc-toolkit.deb && \
-    rm /tmp/minc-toolkit.deb
+    rm /tmp/minc-toolkit.deb && \
+    ls

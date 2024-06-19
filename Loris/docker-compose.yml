@@ -36,7 +36,7 @@ services:
   mri:
     build:
       context: ..
-      dockerfile: Dockerfile.test.mri
+      dockerfile: ../Dockerfile.test.mri
     volumes:
       - ./:/app
       - ./test/test_instrument/NDB_BVL_Instrument_testtest.class.inc:/app/project/instruments/NDB_BVL_Instrument_testtest.class.inc
