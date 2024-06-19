@@ -23,10 +23,14 @@ RUN cpan reload cpan
 
 
 # Continue with your Dockerfile steps
-# Create directories and download the code
+# Create directories and list files
 RUN mkdir -p /data/Loris-mri && \
     mkdir -p /opt/Loris-mri/bin/mri && \
-    cp -r . /opt/Loris-mri/bin/mri
+    ls -l
+
+# Copy files from the current directory to the destination
+COPY . /opt/Loris-mri/bin/mri
+
 
 # Update the package list and install required packages
 RUN apt-get update && \
