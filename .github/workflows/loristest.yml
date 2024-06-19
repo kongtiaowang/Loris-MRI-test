@@ -69,8 +69,7 @@ jobs:
 
     - name: Build LORIS-MRI
       run: |
-        sudo apt install build-essential checkinstall cmake
-        mkdir Loris-MRI
+        cp -r * /Loris
 
     - name: Run Test Suite
       run: |
