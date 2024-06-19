@@ -38,8 +38,8 @@ services:
       context: .
       dockerfile: Dockerfile.test.mri
     volumes:
-      - ../:/
-    working_dir: /
+      - ../:/app
+    working_dir: /app
 
 
   unit-tests:

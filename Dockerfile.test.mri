@@ -26,7 +26,7 @@ RUN cpan reload cpan
 # Create directories and list files
 RUN mkdir -p /data/Loris-mri && \
     mkdir -p /opt/Loris-mri/bin/mri && \
-    pwd && \
+    cd /app && \
     echo "====" && \
     ls -l
 
