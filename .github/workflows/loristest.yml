@@ -67,6 +67,11 @@ jobs:
         cd Loris
         make dev
 
+    - name: Build LORIS-MRI
+      run: |
+        cd Loris
+        mkdir Loris-MRI
+
     - name: Run Test Suite
       run: |
           # set sandbox to 1 before running the tests
