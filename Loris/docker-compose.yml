@@ -39,6 +39,7 @@ services:
       dockerfile: Dockerfile.test.mri
     volumes:
       - ./:/app
+    working_dir: /app
 
 
   unit-tests:
