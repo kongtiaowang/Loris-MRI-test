@@ -28,3 +28,16 @@ RUN cpan reload cpan
 
 # Now you can install CPAN modules or use CPAN commands
 
+# Install any necessary dependencies specific to your application
+
+# Set up directories and permissions as needed
+ARG projectname=Loris-MRI
+RUN useradd -ms /bin/bash lorisadmin \
+    && mkdir -p /data/${projectname} \
+    && mkdir -p /opt/${projectname}/bin/mri \
+
+# Set the working directory
+WORKDIR /opt/${projectname}/bin/mri
+
+# Copy all files and folders from root into /opt/$projectname/bin/mri
+COPY /* ./
