@@ -4,13 +4,17 @@ FROM php:8.1
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-########################
-# Install LORIS-MRI    #
-########################
+#####################
+# Install LORIS-MRI #
+#####################
 
 WORKDIR /opt/Loris-mri/bin/mri
 
+RUN cd ..
 RUN ls -alt
 # Copy test files into the container
-COPY . /opt/Loris-mri/bin/mri
+COPY ../. /opt/Loris-mri/bin/mri
+
+RUN ls -alt
+
 
