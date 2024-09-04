@@ -30,7 +30,6 @@ RUN apt-get update \
 
 # Install MINC Toolkit dependencies
 RUN apt-get install libc6 libstdc++6 imagemagick perl
-RUN apt-get install libgl1-mesa-glx libglu1-mesa
 
 # Download and install MINC toolkit package
 # Download a file using wget and output download progress
