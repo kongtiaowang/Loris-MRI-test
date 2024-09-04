@@ -2,7 +2,7 @@ FROM php:8.1
 
 ENV UBUNTU_FRONTEND=noninteractive
 
-RUN lsb_release -a
+RUN lsb_release 
 
 RUN apt-get update && \
     apt-get install -y mariadb-client libzip-dev
