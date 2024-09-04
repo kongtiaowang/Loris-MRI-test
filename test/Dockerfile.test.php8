@@ -44,3 +44,10 @@ RUN dpkg -i /tmp/minc-toolkit-1.9.18-20200813-Debian_10-x86_64.deb
 # Run the MINC Toolkit configuration script 
 RUN . /opt/minc/1.9.18/minc-toolkit-config.sh
 
+RUN wget -P /tmp https://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-toolkit-testsuite-0.1.3-20131212.deb
+RUN wget -P /tmp https://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/bic-mni-models-0.1.1-20120421.deb
+RUN wget -P /tmp https://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/beast-library-1.1.0-20121212.deb
+RUN dpkg -i /tmp/bic-mni-models-0.1.1-20120421.deb
+RUN dpkg -i /tmp/bic-mni-models-0.1.1-20120421.deb
+RUN dpkg -i /tmp/beast-library-1.1.0-20121212.deb
+
