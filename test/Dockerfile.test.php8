@@ -1,6 +1,8 @@
 FROM php:8.1
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV UBUNTU_FRONTEND=noninteractive
+
+RUN lsb_release -a
 
 RUN apt-get update && \
     apt-get install -y mariadb-client libzip-dev
@@ -28,10 +30,10 @@ RUN apt-get update \
 
 # Download and install MINC toolkit package
 # Download a file using wget and output download progress
-RUN wget -q --show-progress -O /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb http://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
+#RUN wget -q --show-progress -O /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb http://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
 
 # Print download file size
 
-RUN dpkg -i /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
+#RUN dpkg -i /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
 
 
