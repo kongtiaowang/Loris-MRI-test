@@ -1,8 +1,7 @@
 FROM php:8.1
 
-ENV UBUNTU_FRONTEND=noninteractive
-
-RUN lsb_release 
+# TODO: What is this variable used for ? Is it really needed ?
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y mariadb-client libzip-dev
@@ -28,12 +27,16 @@ RUN apt-get update \
         virtualenv \
     && rm -rf /var/lib/apt/lists/*
 
+
+# Install MINC Toolkit dependencies
+RUN apt-get install libc6 libstdc++6 imagemagick perl
+RUN apt-get install libgl1-mesa-glx libglu1-mesa
+
 # Download and install MINC toolkit package
 # Download a file using wget and output download progress
-#RUN wget -q --show-progress -O /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb http://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
+RUN wget -q --show-progress -O /tmp/minc-toolkit-1.9.18-20200813-Debian_10-x86_64.deb http://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-toolkit-1.9.18-20200813-Debian_10-x86_64.deb
 
 # Print download file size
 
-#RUN dpkg -i /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
-
+RUN dpkg -i /tmp/minc-toolkit-1.0.09-20170529-Debian_9.13-x86_64.deb
 
