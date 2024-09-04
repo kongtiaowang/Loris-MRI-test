@@ -33,7 +33,7 @@ WORKDIR /opt/${projectname}/bin/mri
 ########################
 
 # Install MINC Toolkit dependencies
-RUN apt-get install libc6 libstdc++6 imagemagick perl
+RUN apt-get install -y libc6 libstdc++6 imagemagick perl
 
 # Download the MINC Toolkit package
 RUN wget -P /tmp http://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-toolkit-1.9.18-20200813-Debian_10-x86_64.deb
