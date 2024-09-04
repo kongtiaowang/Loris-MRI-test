@@ -41,3 +41,6 @@ RUN wget -P /tmp http://packages.bic.mni.mcgill.ca/minc-toolkit/Debian/minc-tool
 # Install the MINC Toolkit package
 RUN dpkg -i /tmp/minc-toolkit-1.9.18-20200813-Debian_10-x86_64.deb
 
+# Run the MINC Toolkit configuration script 
+RUN source /opt/minc/1.9.18/minc-toolkit-config.sh
+
